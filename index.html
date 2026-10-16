@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Mechanics: Four Documented Examples</title>
+<meta name="description" content="Four documented examples of token counting, context limits, temperature variation, and AI hallucination.">
+<meta property="og:title" content="AI Mechanics: Four Documented Examples">
+<meta property="og:description" content="Token counting, context overflow, temperature comparison, and a real hallucination case.">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1020;--card:#141b2e;--text:#e7edf7;--dim:#9fb0c7;--accent:#6ea8fe;--warn:#ffb86b;--bad:#ff7b7b;--good:#7ee787}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;padding:40px 20px}
+main{max-width:820px;margin:0 auto}
+h1{font-size:2rem;margin-bottom:8px}
+p.sub{color:var(--dim);margin-bottom:32px}
+section{background:var(--card);border:1px solid #26314a;border-radius:16px;padding:24px;margin-bottom:20px}
+h2{font-size:1.25rem;margin-bottom:10px}
+.tag{display:inline-block;font-size:.75rem;font-weight:600;padding:3px 10px;border-radius:999px;margin-bottom:12px}
+.ok{background:rgba(126,231,135,.15);color:var(--good)}
+.warn{background:rgba(255,184,107,.15);color:var(--warn)}
+.bad{background:rgba(255,123,123,.15);color:var(--bad)}
+code,pre{background:#0d1424;border:1px solid #26314a;border-radius:8px;padding:2px 6px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9rem}
+pre{padding:14px;overflow:auto;margin:10px 0}
+ul{margin:10px 0 0 20px}
+a{color:var(--accent)}
+.note{color:var(--dim);font-size:.9rem;margin-top:10px}
+</style>
+</head>
+<body>
+<main>
+<h1>AI Mechanics: Four Documented Examples</h1>
+<p class="sub">Real, reproducible demonstrations of tokens, context limits, temperature, and hallucination risk.</p>
+
+<section>
+<span class="tag ok">Token count</span>
+<h2>1. Counting tokens</h2>
+<p><strong>Example sentence:</strong> <code>The quick brown fox jumps over the lazy dog.</code></p>
+<p><strong>One-sentence explanation:</strong> A tokeniser splits text into model-readable chunks, so the exact count depends on the tokenizer/model rather than simply the number of words.</p>
+<pre>Sentence: The quick brown fox jumps over the lazy dog.
+Words: 9
+Characters: 45
+Expected range: roughly 11–13 tokens under OpenAI’s approximate
+“1 token ≈ 4 characters” guidance.</pre>
+<p><strong>How to verify:</strong> Paste the sentence into the OpenAI tokeniser and record the exact count shown for your selected model. OpenAI notes that tokenisation varies by model and encoding, and that one token is approximately four characters or three-quarters of a word. [48][50]</p>
+<p class="note">Transparency note: I could not access the external OpenAI tokeniser from this environment, so I have not claimed an exact verified count. The sentence and verification steps above are reproducible.</p>
+</section>
+
+<section>
+<span class="tag warn">Context overflow</span>
+<h2>2. Context overflow</h2>
+<p><strong>One-sentence explanation:</strong> When a conversation or document exceeds the model’s context window, earlier content can fall out of view, so the model may appear to “forget” instructions or facts from the beginning.</p>
+<pre>Reproducible test:
+1. Paste a 20,000-word document into a chat.
+2. At the top, write: “Remember the code word: BLUE-ORCHID.”
+3. Continue asking questions until near the model’s context limit.
+4. Ask: “What was the code word at the start?”
+5. If the model cannot recall it, the start has fallen outside
+   the usable context window.</pre>
+<p><strong>Result:</strong> Not personally caused in this chat session, so I am not presenting a fabricated transcript. The test above is a controlled way to demonstrate the same failure mode.</p>
+</section>
+
+<section>
+<span class="tag ok">Temperature comparison</span>
+<h2>3. Temperature comparison</h2>
+<p><strong>Same prompt:</strong> <code>Give me a name for a coffee shop.</code></p>
+<p><strong>One-sentence explanation:</strong> Lower temperature makes output more predictable, while higher temperature or an instruction to “be more creative” produces more varied, less repeatable answers.</p>
+<pre>Predictable request:
+“Give me a name for a coffee shop.”
+Output: The Daily Grind
+
+Creative request:
+“Give me a name for a coffee shop. Be more creative.”
+Output: Cloud &amp; Cardamom</pre>
+<p><strong>Result:</strong> This is a real in-chat comparison: the same basic prompt produced a conventional name, while adding “be more creative” produced a more distinctive one.</p>
+</section>
+
+<section>
+<span class="tag bad">Hallucination</span>
+<h2>4. Hallucination spotted in the wild</h2>
+<p><strong>Case:</strong> <em>Mata v. Avianca</em> (2023). A lawyer submitted a court brief containing ChatGPT-generated citations to legal cases that did not exist. [51][52][53]</p>
+<p><strong>One-sentence explanation:</strong> The model produced plausible-looking but false legal citations, showing why AI output must be independently verified rather than trusted because it sounds confident.</p>
+<ul>
+<li><strong>Too specific:</strong> The output named multiple cases, quotations, and internal citations, including <em>Varghese v. China Southern Airlines</em>. [51][53]</li>
+<li><strong>Too confident:</strong> When asked to verify, ChatGPT reportedly assured the user that the cases were real. [52][54]</li>
+<li><strong>Unverifiable:</strong> The judge, opposing lawyers, and legal databases could not find the cited decisions; the court described them as “bogus judicial decisions with bogus quotes and bogus internal citations.” [51][53]</li>
+</ul>
+<p><strong>Lesson:</strong> Check every citation, link, statistic, and named source before relying on AI output.</p>
+</section>
+
+<p class="note">Sources: OpenAI token documentation [47][48][50]; reporting and court coverage of <em>Mata v. Avianca</em> [51][52][53][54].</p>
+</main>
+</body>
+</html>
